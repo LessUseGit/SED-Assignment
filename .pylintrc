@@ -1,0 +1,8 @@
+[MASTER]
+disable=
+    C0114, # Missing module docstring
+    C0115, # Missing class docstring
+    C0116, # Missing function docstring
+    R0903, # Classes have too few public methods
+    R0913, # Too many arguements
+    R0917, # Too many positional arguements

@@ -1,0 +1,122 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <!-- Left Column: User Profile Form -->
+    <div class="col-md-6">
+      <h2 class="mb-4">Update Profile</h2>
+      <form method="post" action="/users/update/{{ user.user_id }}" novalidate>
+        <div class="form-group mb-3">
+          <h6>Please fill form in entirely</h6>
+          <label for="username">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            name="username"
+            value="{{ user.username }}"
+            required
+          />
+        </div>
+        <div class="form-group mb-3">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            value="{{ user.email }}"
+            required
+          />
+        </div>
+        <div class="form-group mb-3">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            placeholder="Leave blank to keep current password"
+          />
+        </div>
+        <div class="form-group mb-3">
+          <label for="confirm_password">Confirm Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="confirm_password"
+            name="confirm_password"
+            placeholder="Re-enter password to confirm"
+          />
+        </div>
+        <input type="hidden" name="is_admin" value="{{ user.is_admin }}" />
+        <input type="hidden" name="is_active" value="false" />
+        <div class="form-check form-switch mb-3">
+          <label class="form-check-label" for="is_active">Active User</label>
+          <input
+            type="checkbox"
+            class="form-check-input"
+            role="switch"
+            id="is_active"
+            name="is_active"
+            {% if user.is_active %} checked {% endif %}
+          />
+        </div>
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-success">Update Profile</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="col-md-6">
+      <h2 class="mb-4">Your Assets</h2>
+      {% if user_assets %}
+      <div class="card">
+          <ul class="list-group">
+            {% for asset in user_assets %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ asset.name }}
+              <button
+                class="btn btn-sm btn-info"
+                data-bs-toggle="modal"
+                data-bs-target="#assetDetailsModal{{ asset.asset_id }}"
+              >
+                View Details
+              </button>
+            </li>
+    
+            <!-- Asset details modal -->
+            <div class="modal fade" id="assetDetailsModal{{ asset.asset_id }}" tabindex="-1">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">
+                      Asset Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>Asset ID:</strong> {{ asset.asset_id }}</p>
+                    <p><strong>Asset Name:</strong> {{ asset.name }}</p>
+                    <p><strong>Serial Number:</strong> {{ asset.serial_number }}</p>
+                    <p><strong>Asset Type:</strong> {{ asset.type }}</p>
+                    <p><strong>Status:</strong> {{ asset.status }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {% endfor %}
+          </ul>
+      </div>
+      {% else %}
+      <p class="text-muted">You do not have any assets in your possession.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
