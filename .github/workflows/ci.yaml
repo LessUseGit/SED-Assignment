@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          pytest
+          pytest -n 0
 
       - name: Run Security Scan (Bandit)
         run: |
