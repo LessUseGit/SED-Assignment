@@ -21,6 +21,10 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Set up environment variables
+        run: |
+          echo "DATABASE_URL=sqlite:///:memory:" >> $GITHUB_ENV
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
