@@ -33,7 +33,7 @@ jobs:
       - name: Run Security Scan (Bandit)
         run: |
           pip install bandit
-          bandit -r .
+          bandit -r ./app
 
       - name: Check for Vulnerabilities in Dependencies (Safety)
         run: |
