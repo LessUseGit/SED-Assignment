@@ -104,7 +104,7 @@ def test_add_asset_with_nonexistent_owner(login_user):
 
 
 def test_get_asset_by_id(create_asset):
-    response = client.get("/assets/getById?asset_id=1")
+    response = client.get("/assets/getById?asset_id=2")
     assert response.status_code == 200
     assert response.json()["name"] == "Test Asset"
 
