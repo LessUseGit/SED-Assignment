@@ -38,4 +38,4 @@ jobs:
       - name: Check for Vulnerabilities in Dependencies (Safety)
         run: |
           pip install safety
-          safety check
+          safety check -r requirements.txt
