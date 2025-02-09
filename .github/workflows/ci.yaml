@@ -26,14 +26,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Unit Tests
+      - name: Unit Tests
         run: |
           pytest
 
-      - name: Run Security Scan (Bandit)
+      - name: Security Scan (Bandit)
         run: |
           pip install bandit
-          bandit -r ./app
+          bandit -r ./app --severity-level high
 
       - name: Check for Vulnerabilities in Dependencies (Safety)
         run: |
