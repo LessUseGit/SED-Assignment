@@ -26,7 +26,7 @@ jobs:
 
       - name: Code Linting
         run: |
-          pylint app/ --output-format=json > pylint-report.json || true
+          pylint app/ --fail-under=8 --output-format=json > pylint-report.json
       
       - name: Upload Lint Report
         uses: actions/upload-artifact@v4
