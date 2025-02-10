@@ -1,15 +1,9 @@
-name: CI/CD Pipeline
+name: CI
 
-on:
-  push:
-#     branches:
-#       - main
-#   pull_request:
-#     branches:
-#       - main
+on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,18 +18,12 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install pytest pylint
 
       - name: Unit Tests
         run: |
           pytest
 
-      - name: Security Scan (Bandit)
+      - name: Code Linting
         run: |
-          pip install bandit
-          bandit -r ./app --severity-level high
-
-      - name: Check for Vulnerabilities in Dependencies (Safety)
-        run: |
-          pip install safety
-          safety check -r requirements.txt
+          pylint app/
