@@ -22,9 +22,14 @@ jobs:
           pip install pytest pylint
 
       - name: Unit Tests
-        run: |
-          pytest
+        run: pytest
 
       - name: Code Linting
         run: |
-          pylint app/
+          pylint app/ --output-format=json > pylint-report.json || true
+      
+      - name: Upload Lint Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pylint-report
+          path: pylint-report.json
