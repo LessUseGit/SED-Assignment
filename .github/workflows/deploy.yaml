@@ -3,6 +3,10 @@ name: Deploy
 on:
   push:
 
+permissions:
+  contents: read
+  deployments: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
