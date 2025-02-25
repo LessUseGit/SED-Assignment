@@ -1,0 +1,35 @@
+name: CI
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --no-cache-dir -r requirements.txt
+          pip install pytest pylint
+
+      - name: Unit Tests
+        run: pytest
+
+      - name: Code Linting
+        run: |
+          pylint app/ --fail-under=8 --output-format=json > pylint-report.json
+      
+      - name: Upload Lint Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pylint-report
+          path: pylint-report.json
