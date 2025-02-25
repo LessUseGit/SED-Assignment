@@ -22,7 +22,7 @@ def create_access_token(data: dict):
     :return: Encoded JWT token as a string.
     """
     to_encode = data.copy()
-    expire = datetime.now() + timedelta(seconds=30)
+    expire = datetime.now() + timedelta(minutes=60)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
