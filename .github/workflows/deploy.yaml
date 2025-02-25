@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       deployments: write
+      repository: read
     steps:
       - uses: JorgeLNJunior/render-deploy@v1.4.5
         with:
