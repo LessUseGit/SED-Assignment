@@ -5,7 +5,7 @@ on:
 
 jobs:
   pip-audit:
-    name: Run pip-audit
+    name: pip-audit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -33,11 +33,11 @@ jobs:
       - name: Upload pip-audit report
         uses: actions/upload-artifact@v4
         with:
-          name: pip-audit-report
+          name: Pip-Audit Report
           path: pip-audit.md
 
   sast:
-    name: Run Semgrep (sast)
+    name: Semgrep (SAST)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
