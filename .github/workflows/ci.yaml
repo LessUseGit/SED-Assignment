@@ -25,7 +25,7 @@ jobs:
         run: pytest --junitxml=pytest-report.xml || true
 
       - name: Convert Test Failures to GitHub Annotations
-        if: failure()
+        if: always()
         run: |
           pip install junit2html
           junit2html pytest-report.xml --report pytest-report.html
