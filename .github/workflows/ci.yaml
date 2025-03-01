@@ -18,7 +18,7 @@ jobs:
         run: |
           pytest --junitxml=pytest-results.xml > pytest-results.txt || true
           echo "### Pytest Results" >> $GITHUB_STEP_SUMMARY
-          pytest-results.txt >> $GITHUB_STEP_SUMMARY
+          tail pytest-results.txt >> $GITHUB_STEP_SUMMARY
 
       - name: Upload PyTest Report
         uses: actions/upload-artifact@v4
