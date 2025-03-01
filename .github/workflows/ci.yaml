@@ -22,7 +22,14 @@ jobs:
           pip install pytest pylint
 
       - name: Unit Tests
-        run: pytest
+        run: pytest --junitxml=pytest-report.xml || true
+
+      - name: Convert Test Failures to GitHub Annotations
+        if: failure()
+        run: |
+          pip install junit2html
+          junit2html pytest-report.xml --report pytest-report.html
+          echo "::error file=tests/,title=Test Failure::Some tests failed! Check the Actions tab."
 
       - name: Code Linting
         run: |
