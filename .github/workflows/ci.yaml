@@ -16,7 +16,7 @@ jobs:
 
       - name: Unit Tests
         run: |
-          pytest --junitxml=pytest-results.xml
+          pytest --junitxml=test-results.xml
 
       - name: Publish Test Report
         uses: EnricoMi/publish-unit-test-result-action@v2
