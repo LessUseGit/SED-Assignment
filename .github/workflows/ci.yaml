@@ -19,6 +19,11 @@ jobs:
           pytest --junitxml=test-results.xml
 
       - name: Publish Test Report
+        permissions:
+          contents: read
+          issues: read
+          checks: write
+          pull-requests: write
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
