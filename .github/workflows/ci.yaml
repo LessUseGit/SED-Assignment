@@ -35,7 +35,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PyTest Report
-          path: pylint-results.xml
+          path: test-results.xml
 
   lint:
     runs-on: ubuntu-latest
@@ -50,4 +50,4 @@ jobs:
       - name: Code Linting
         run: |
           echo "### Pylint Results" >> $GITHUB_STEP_SUMMARY
-          pylint app/ --fail-under=8 --output-format=json > pylint-report.json || true >> $GITHUB_STEP_SUMMARY
+          pylint app/ --fail-under=8 --output-format=json > pylint-report.json >> $GITHUB_STEP_SUMMARY
