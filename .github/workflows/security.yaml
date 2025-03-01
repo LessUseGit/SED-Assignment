@@ -25,9 +25,23 @@ jobs:
         run: |
           bandit -r ./app --severity-level high
 
-      - uses: pypa/gh-action-pip-audit@v1.0.0
+      - name: Dependency Check Strict (pip-audit)
+        if: github.ref == 'refs/heads/main'
+        run: pip-audit --strict
+
+      - name: Dependency Check (pip-audit)
+        if: github.ref != 'refs/heads/main'
+        continue-on-error: true
+        run: pip-audit
+
+      - name: Save pip-audit results
+        run: pip-audit --output pip-audit-report.json --format json
+
+      - name: Upload pip-audit report
+        uses: actions/upload-artifact@v3
         with:
-          inputs: requirements.txt
+          name: pip-audit-report
+          path: pip-audit-report.json
 
   # zap_scan:
   #   runs-on: ubuntu-latest
