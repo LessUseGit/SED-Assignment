@@ -45,6 +45,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          pip install --no-cache-dir -r requirements.txt
           pip install pylint
 
       - name: Code Linting
