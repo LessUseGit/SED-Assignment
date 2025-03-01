@@ -15,17 +15,9 @@ jobs:
         run: |
           pip install pip-audit
 
-      - name: Dependency Check Strict (pip-audit)
-        if: github.ref == 'refs/heads/main'
-        run: |
-          pip-audit --strict --format markdown > pip-audit.md
-          echo "### Pip Audit Results" >> $GITHUB_STEP_SUMMARY
-          cat pip-audit.md >> $GITHUB_STEP_SUMMARY
-
       - name: Dependency Check (pip-audit)
-        if: github.ref != 'refs/heads/main'
         run: |
-          pip-audit --format markdown > pip-audit.md
+          pip-audit -r requirements.txt --strict --format markdown > pip-audit.md
           echo "### Pip Audit Results" >> $GITHUB_STEP_SUMMARY
           cat pip-audit.md >> $GITHUB_STEP_SUMMARY
 
