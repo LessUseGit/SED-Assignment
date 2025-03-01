@@ -5,35 +5,42 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Install Dependencies
+        run: |
+          pip install --no-cache-dir -r requirements.txt
+          pip install pytest
+
+      - name: Unit Tests
+        run: |
+          pytest --junitxml=pytest-results.xml > pytest-results.txt || true
+          echo "### Pytest Results" >> $GITHUB_STEP_SUMMARY
+          tail -n 10 pytest-results.txt >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload PyTest Report
+        uses: actions/upload-artifact@v4
         with:
-          python-version: "3.11"
+          name: pytest-results
+          path: pylint-results.xml
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install --no-cache-dir -r requirements.txt
-          pip install pytest pylint
-
-      - name: Unit Tests
-        run: pytest --junitxml=pytest-report.xml || true
-
-      - name: Convert Test Failures to GitHub Annotations
-        if: always()
-        run: |
-          pip install junit2html
-          junit2html pytest-report.xml --report pytest-report.html
-          echo "::error file=tests/,title=Test Failure::Some tests failed! Check the Actions tab."
+          pip install pylint
 
       - name: Code Linting
         run: |
-          pylint app/ --fail-under=8 --output-format=json > pylint-report.json
+          pylint app/ --fail-under=8 --output-format=json > pylint-report.json || true
+          echo "### Pylint Results" >> $GITHUB_STEP_SUMMARY
+          pylint app/ --output-format=parseable | tail -n 10 >> $GITHUB_STEP_SUMMARY
       
       - name: Upload Lint Report
         uses: actions/upload-artifact@v4

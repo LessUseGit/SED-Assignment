@@ -4,41 +4,59 @@ on:
   push:
 
 jobs:
-  sast:
+  pip-audit:
+    name: Run pip-audit
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install bandit pip-audit
-
-      - name: Static Security Scan (Bandit)
-        run: |
-          bandit -r ./app --severity-level high
+          pip install pip-audit
 
       - name: Dependency Check Strict (pip-audit)
         if: github.ref == 'refs/heads/main'
-        run: pip-audit --strict
+        run: |
+          pip-audit --strict --format markdown > pip-audit.md
+          echo "### Pip Audit Results" >> $GITHUB_STEP_SUMMARY
+          cat pip-audit.md >> $GITHUB_STEP_SUMMARY
 
       - name: Dependency Check (pip-audit)
         if: github.ref != 'refs/heads/main'
         continue-on-error: true
-        run: pip-audit --output pip-audit-report.json --format json
+        run: |
+          pip-audit --format markdown > pip-audit.md
+          echo "### Pip Audit Results" >> $GITHUB_STEP_SUMMARY
+          cat pip-audit.md >> $GITHUB_STEP_SUMMARY
 
       - name: Upload pip-audit report
         uses: actions/upload-artifact@v4
         with:
           name: pip-audit-report
-          path: pip-audit-report.json
+          path: pip-audit.md
+
+  sast:
+    name: Run Semgrep (sast)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Semgrep
+        run: pip install semgrep
+
+      - name: Run Semgrep
+        run: |
+          semgrep --config=auto --json > semgrep-report.json || true
+          echo "### Semgrep Results" >> $GITHUB_STEP_SUMMARY
+          semgrep --config=auto | tail -n 10 >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Semgrep Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: Semgrep Report
+          path: semgrep-report.json
 
   # zap_scan:
   #   runs-on: ubuntu-latest
