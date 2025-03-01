@@ -16,9 +16,16 @@ jobs:
 
       - name: Unit Tests
         run: |
-          pytest --junitxml=pytest-results.xml > pytest-results.txt || true
-          echo "### Pytest Results" >> $GITHUB_STEP_SUMMARY
-          tail pytest-results.txt >> $GITHUB_STEP_SUMMARY
+          pytest --junitxml=pytest-results.xml
+
+      - name: Publish Test Report
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            test-results/**/*.xml
+            test-results/**/*.trx
+            test-results/**/*.json
 
       - name: Upload PyTest Report
         uses: actions/upload-artifact@v4
