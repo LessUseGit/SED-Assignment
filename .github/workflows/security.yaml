@@ -17,15 +17,7 @@ jobs:
 
       - name: Dependency Check (pip-audit)
         run: |
-          pip-audit -r requirements.txt --strict --format markdown > pip-audit.md
-          echo "### Pip Audit Results" >> $GITHUB_STEP_SUMMARY
-          cat pip-audit.md >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload pip-audit report
-        uses: actions/upload-artifact@v4
-        with:
-          name: Pip-Audit Report
-          path: pip-audit.md
+          pip-audit -r requirements.txt --strict
 
   sast:
     name: sast
