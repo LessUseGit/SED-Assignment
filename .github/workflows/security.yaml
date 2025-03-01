@@ -24,7 +24,6 @@ jobs:
 
       - name: Dependency Check (pip-audit)
         if: github.ref != 'refs/heads/main'
-        continue-on-error: true
         run: |
           pip-audit --format markdown > pip-audit.md
           echo "### Pip Audit Results" >> $GITHUB_STEP_SUMMARY
@@ -37,7 +36,7 @@ jobs:
           path: pip-audit.md
 
   sast:
-    name: Semgrep (SAST)
+    name: sast
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
