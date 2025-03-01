@@ -32,9 +32,6 @@ jobs:
       - name: Dependency Check (pip-audit)
         if: github.ref != 'refs/heads/main'
         continue-on-error: true
-        run: pip-audit
-
-      - name: Save pip-audit results
         run: pip-audit --output pip-audit-report.json --format json
 
       - name: Upload pip-audit report
