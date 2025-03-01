@@ -51,4 +51,4 @@ jobs:
       - name: Code Linting
         run: |
           echo "### Pylint Results" >> $GITHUB_STEP_SUMMARY
-          pylint app/ --fail-under=8
+          pylint app/ --fail-under=8 >> $GITHUB_STEP_SUMMARY
