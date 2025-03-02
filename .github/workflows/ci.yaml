@@ -34,7 +34,7 @@ jobs:
       - name: Test Summary
         uses: test-summary/action@v2
         with:
-          files: |
+          paths: |
             "test-results.xml"
         if: always()
 
