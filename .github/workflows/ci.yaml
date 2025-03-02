@@ -34,8 +34,7 @@ jobs:
       - name: Test Summary
         uses: test-summary/action@v2
         with:
-          paths: |
-            "test-results.xml"
+          paths: "./test-results.xml"
         if: always()
 
       - name: Upload PyTest Report
