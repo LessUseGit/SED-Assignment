@@ -26,10 +26,17 @@ jobs:
 
       - name: Publish Test Report
         uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
         with:
           files: |
             test-results.xml
+        if: always()
+
+      - name: Test Summary
+        uses: test-summary/action@v2
+        with:
+          files: |
+            "test-results.xml"
+        if: always()
 
       - name: Upload PyTest Report
         uses: actions/upload-artifact@v4
