@@ -1,6 +1,8 @@
 from fastapi import Request, HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 from jose.exceptions import ExpiredSignatureError
+from slowapi.errors import RateLimitExceeded
+from starlette.requests import Request
 from app.middleware import add_flash_message
 
 
@@ -37,3 +39,10 @@ def auth_exception_handler(request: Request, exc: HTTPException):
             request, "Invalid user token, please login again", category="danger"
         )
         return RedirectResponse(url="/login")
+
+
+async def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "Rate limit exceeded. Please try again later."},
+    )

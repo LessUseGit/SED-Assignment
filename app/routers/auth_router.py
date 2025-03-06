@@ -5,8 +5,9 @@ from fastapi.templating import Jinja2Templates
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from app import auth
-from app.database.database import get_db
 from app.crud import user_crud
+from app.database.database import get_db
+from app.dependencies import limiter
 from app.middleware import add_flash_message, get_flash_messages
 from app.schemas.user_schemas import UserCreate
 
@@ -23,6 +24,7 @@ def get_login_page(request: Request):
 
 
 @auth_router.post("/login")
+@limiter.limit("5/minute")
 def login(
     request: Request, 
     db: Session = Depends(get_db),
@@ -66,6 +68,7 @@ def get_register_page(request: Request):
 
 
 @auth_router.post("/register")
+@limiter.limit("3/minute")
 def register(
     request: Request,
     username: str = Form(...),
