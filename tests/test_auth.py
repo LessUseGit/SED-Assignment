@@ -1,3 +1,4 @@
+import time
 import pytest
 from fastapi.testclient import TestClient
 from jose import jwt
@@ -52,7 +53,7 @@ def test_successful_registration():
         data=test_user,
     )
     assert response.status_code == 200
-    # assert "Successfully registered" in response.text
+    assert "Successfully registered" in response.text
 
 
 def test_registration_with_existing_email():
@@ -239,3 +240,81 @@ def test_successful_logout():
     assert "Logout successful" in logout_redirect.text
     assert logout_redirect.status_code == 200
     assert logout_redirect.cookies.get("access_token") is None
+
+
+def test_rate_limiting_on_login():
+    for i in range(5):
+        response = client.post(
+            "/login",
+            data={"username": "testuser", "password": "wrongpassword"},
+        )
+        assert response.status_code in [401, 200]
+    
+    response = client.post(
+        "/login",
+        data={"username": "testuser", "password": "wrongpassword"},
+    )
+
+    assert response.status_code == 429
+    assert "5 per 1 minute" in response.text
+
+
+@pytest.mark.slow
+def test_rate_limiting_resets_login():
+    for i in range(5):
+        client.post("/login", data={"username": "testuser", "password": "wrongpassword"})
+
+    response = client.post("/login", data={"username": "testuser", "password": "wrongpassword"})
+    assert response.status_code == 429
+
+    time.sleep(60)
+
+    response = client.post("/login", data={"username": "testuser", "password": "wrongpassword"})
+    assert response.status_code in [401, 200]
+
+
+def test_rate_limiting_on_register():
+    test_register_user = {
+        "username": "testuserregister",
+        "email": "testuserregister@example.com",
+        "password": "password123",
+        "confirm_password": "password123",
+        "is_admin": False,
+    }
+
+    for i in range(3):
+        response = client.post(
+            "/register",
+            data=test_register_user,
+        )
+        assert response.status_code in [401, 200]
+    
+    response = client.post(
+        "/register",
+        data=test_register_user,
+    )
+
+    assert response.status_code == 429
+    assert "3 per 1 minute" in response.text
+
+
+@pytest.mark.slow
+def test_rate_limiting_resets_register():
+    test_register_user_resets = {
+        "username": "testuserregister",
+        "email": "testuserregister@example.com",
+        "password": "password123",
+        "confirm_password": "password123",
+        "is_admin": False,
+    }
+
+    for i in range(3):
+        client.post("/register", data=test_register_user_resets)
+
+    response = client.post("/register", data=test_register_user_resets)
+    assert response.status_code == 429
+
+    time.sleep(60)
+
+    response = client.post("/register", data=test_register_user_resets)
+    assert response.status_code in [401, 200]
