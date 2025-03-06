@@ -42,8 +42,8 @@ def create_tables():
 
 def test_successful_registration():
     test_user = {
-        "username": "testuser",
-        "email": "testuser@example.com",
+        "username": "testuser56789",
+        "email": "testuser@email.com",
         "password": "password123",
         "confirm_password": "password123",
         "is_admin": False,
@@ -53,6 +53,7 @@ def test_successful_registration():
         data=test_user,
     )
     assert response.status_code == 200
+    print(response.text)
     assert "Successfully registered" in response.text
 
 
