@@ -10,19 +10,22 @@ from app.security import verify_password
 # Constants for token generation
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 
 def create_access_token(data: dict):
     """
-    Create a JWT access token.
+    Generates a JWT access token with an expiration time (60 mins).
 
-    :param data: Data to encode into the token (e.g., user's email).
-    :param expires_delta: Time until the token expires.
-    :return: Encoded JWT token as a string.
+    Args:
+        data (dict): Data to encode into the token (e.g., user's email).
+        expires_delta (timedelta, optional): Time until the token expires. Defaults to 300 seconds.
+
+    Returns:
+        str: Encoded JWT token.
     """
     to_encode = data.copy()
-    expire = datetime.now() + timedelta(minutes=60)
+    expire = datetime.now() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -30,17 +33,19 @@ def create_access_token(data: dict):
 
 def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
     """
-    Authenticates the user by email and password.
+    Authenticates a user by verifying their username and password.
 
-    :param username: The username of the user trying to log in.
-    :param password: The plain text password provided by the user.
-    :param db: The SQLAlchemy database session.
-    :return: The User object if authentication is successful, False otherwise.
+    Args:
+        username (str): The username of the user attempting to log in.
+        password (str): The plain text password provided by the user.
+        db (Session): The SQLAlchemy database session.
+
+    Returns:
+        User: The authenticated User object if successful.
+        bool: False if authentication fails.
     """
     user = get_user_by_username(db, username)
-    if not user:
-        return False
-    if not verify_password(password, user.hashed_password):
+    if not user or not verify_password(password, user.hashed_password):
         return False
     return user
 
@@ -48,6 +53,22 @@ def authenticate_user(username: str, password: str, db: Session = Depends(get_db
 def get_current_user(
     db: Session = Depends(get_db), cookie: str = Cookie(None, alias="access_token")
 ):
+    """
+    Retrieves the currently authenticated user based on the provided access token.
+
+    Args:
+        db (Session): Database session dependency for querying the user.
+        cookie (str): Access token stored in a cookie, used for authentication.
+
+    Returns:
+        User: The authenticated user object if the token is valid.
+
+    Raises:
+        HTTPException: 
+            - 401 Unauthorized if no access token is provided.
+            - 401 Unauthorized if the token is invalid or expired.
+            - 401 Unauthorized if the user does not exist in the database.
+    """
     credentials_exception = HTTPException(
         status_code=401,
         detail="Could not validate credentials",

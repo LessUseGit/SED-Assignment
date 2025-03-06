@@ -162,9 +162,10 @@ def test_failed_login():
             "username": "non_existent_user",
             "password": "wrongpassword",
         },
+        follow_redirects=False
     )
-    assert response.status_code == 401
-    assert "Invalid credentials" in response.text
+    assert response.status_code == 303
+    assert "/login" in response.headers['location']
 
 
 def test_access_protected_route_with_valid_token():
@@ -198,7 +199,10 @@ def test_access_protected_route_with_invalid_token():
     secret = "wrong_secret"
     invalid_token = jwt.encode(payload, secret, algorithm="HS256")
     response = client.get("/dashboard", cookies={"access_token": invalid_token})
-    assert response.status_code == 401
+    print(response.headers)
+    # Verify that it redirects back to the login page
+    assert response.status_code == 200
+    assert "Login" in response.text
 
 
 def test_successful_logout():

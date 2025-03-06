@@ -5,20 +5,26 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
-    Verifies if the provided plain text password matches the hashed password.
+    Compares a plain text password with a hashed password.
 
-    :param plain_password: The plain text password provided by the user.
-    :param hashed_password: The hashed password stored in the database.
-    :return: True if the passwords match, False otherwise.
+    Args:
+        plain_password (str): The plain text password.
+        hashed_password (str): The hashed password stored in the database.
+
+    Returns:
+        bool: True if passwords match, False otherwise.
     """
     return pwd_context.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
     """
-    Hashes the provided password using bcrypt.
+    Hashes a given password using bcrypt.
 
-    :param password: The plain text password provided by the user.
-    :return: The hashed version of the password.
+    Args:
+        password (str): The plain text password.
+
+    Returns:
+        str: The hashed password.
     """
     return pwd_context.hash(password)
