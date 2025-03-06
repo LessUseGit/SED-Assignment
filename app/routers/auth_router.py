@@ -24,13 +24,17 @@ def get_login_page(request: Request):
 
 @auth_router.post("/login")
 def login(
-    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
+    request: Request, 
+    db: Session = Depends(get_db),
+    username: str = Form(...),
+    password: str = Form(...),
 ):
     user = auth.authenticate_user(
-        db=db, username=form_data.username, password=form_data.password
+        db=db, username=username, password=password
     )
     if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        add_flash_message(request, "Invalid credentials", category="danger")
+        return RedirectResponse(url="/login", status_code=303)
 
     access_token = auth.create_access_token(data={"sub": user.email})
 
