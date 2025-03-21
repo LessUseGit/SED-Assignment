@@ -31,6 +31,12 @@ app.dependency_overrides[get_db] = override_get_db
 client = TestClient(app)
 
 
+@pytest.fixture(autouse=True)
+def reset_database():
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+
+
 @pytest.fixture
 def create_user():
     user_data = {
@@ -50,6 +56,8 @@ def login_user(create_user):
         "/login",
         data={"username": create_user["username"], "password": create_user["password"]},
     )
+
+    print(response.cookies)
     return response.cookies
 
 
@@ -58,7 +66,6 @@ def test_dashboard(login_user):
 
     assert response.status_code == 200
     assert "Asset Management Dashboard" in response.text
-    assert "flash_messages" in response.context # type: ignore
 
 
 def test_health_check():

@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
@@ -5,13 +6,17 @@ from fastapi.templating import Jinja2Templates
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from app import auth
-from app.database.database import get_db
 from app.crud import user_crud
+from app.database.database import get_db
+from app.dependencies import limiter
 from app.middleware import add_flash_message, get_flash_messages
 from app.schemas.user_schemas import UserCreate
 
 auth_router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+
+
+SECURE_COOKIES = os.getenv("TESTING", "false").lower() == "true"
 
 
 @auth_router.get("/login")
@@ -23,6 +28,7 @@ def get_login_page(request: Request):
 
 
 @auth_router.post("/login")
+@limiter.limit("5/minute")
 def login(
     request: Request, 
     db: Session = Depends(get_db),
@@ -40,7 +46,11 @@ def login(
 
     response = JSONResponse(content={"message": "Login successful"})
     response.set_cookie(
-        key="access_token", value=f"Bearer {access_token}", httponly=True
+        key="access_token",
+        value=f"Bearer {access_token}",
+        httponly=True,
+        secure=SECURE_COOKIES,
+        samesite="strict",
     )
     response.headers["Location"] = "/dashboard"
     response.status_code = 302
@@ -66,6 +76,7 @@ def get_register_page(request: Request):
 
 
 @auth_router.post("/register")
+@limiter.limit("3/minute")
 def register(
     request: Request,
     username: str = Form(...),
