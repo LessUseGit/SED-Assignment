@@ -19,7 +19,6 @@ def create_access_token(data: dict):
 
     Args:
         data (dict): Data to encode into the token (e.g., user's email).
-        expires_delta (timedelta, optional): Time until the token expires. Defaults to 300 seconds.
 
     Returns:
         str: Encoded JWT token.

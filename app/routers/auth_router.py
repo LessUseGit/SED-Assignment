@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
@@ -13,6 +14,9 @@ from app.schemas.user_schemas import UserCreate
 
 auth_router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+
+
+SECURE_COOKIES = os.getenv("TESTING", "false").lower() == "true"
 
 
 @auth_router.get("/login")
@@ -42,7 +46,11 @@ def login(
 
     response = JSONResponse(content={"message": "Login successful"})
     response.set_cookie(
-        key="access_token", value=f"Bearer {access_token}", httponly=True
+        key="access_token",
+        value=f"Bearer {access_token}",
+        httponly=True,
+        secure=SECURE_COOKIES,
+        samesite="strict",
     )
     response.headers["Location"] = "/dashboard"
     response.status_code = 302
