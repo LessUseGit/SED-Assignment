@@ -53,7 +53,6 @@ def test_successful_registration():
         data=test_user,
     )
     assert response.status_code == 200
-    print(response.text)
     assert "Successfully registered" in response.text
 
 
@@ -201,8 +200,6 @@ def test_access_protected_route_with_invalid_token():
     secret = "wrong_secret"
     invalid_token = jwt.encode(payload, secret, algorithm="HS256")
     response = client.get("/dashboard", cookies={"access_token": invalid_token})
-    print(response.headers)
-    # Verify that it redirects back to the login page
     assert response.status_code == 200
     assert "Login" in response.text
 

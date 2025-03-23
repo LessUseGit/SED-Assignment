@@ -2,6 +2,7 @@ from jose import ExpiredSignatureError
 from fastapi import FastAPI, HTTPException
 from slowapi.middleware import SlowAPIMiddleware
 from starlette.middleware.sessions import SessionMiddleware
+from app.populate_db import create_default_assets, create_default_users
 from app.routers import auth_router, assets_router, main_router, users_router
 from app.database.database import Base, engine
 from app.dependencies import limiter
@@ -20,6 +21,9 @@ app.add_exception_handler(HTTPException, auth_exception_handler)
 SECRET = "super-secret-key"
 
 Base.metadata.create_all(bind=engine)
+
+create_default_users()
+create_default_assets()
 
 app.include_router(main_router.main_router)
 app.include_router(auth_router.auth_router)

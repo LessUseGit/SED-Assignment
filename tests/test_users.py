@@ -204,6 +204,5 @@ def test_delete_user(create_user, login_user):
 
 # def test_delete_nonexistent_user(login_user):
 #     response = client.post("/users/delete/999", cookies=login_user)
-#     print(response.text)
 #     assert response.status_code == 200
 #     assert "Failed to delete user" in response.text

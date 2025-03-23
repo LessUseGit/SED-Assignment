@@ -23,8 +23,6 @@ def dashboard(
     assets_list = get_assets(db=db)
     for asset in assets_list:
         asset.owner_email = get_email_from_user_id(db=db, user_id=asset.owner_id)
-        print(asset.owner_id)
-        print(asset.owner_email)
 
     flash_messages = get_flash_messages(request)
 
