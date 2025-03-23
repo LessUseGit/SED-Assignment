@@ -57,7 +57,6 @@ def login_user(create_user):
         data={"username": create_user["username"], "password": create_user["password"]},
     )
 
-    print(response.cookies)
     return response.cookies
 
 

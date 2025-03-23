@@ -11,6 +11,10 @@ def get_asset_by_owner_id(db: Session, owner_id: int):
     return db.query(Asset).filter(Asset.owner_id == owner_id).all()
 
 
+def get_asset_by_serial_number(db: Session, serial_number: str):
+    return db.query(Asset).filter(Asset.serial_number == serial_number).all()
+
+
 def get_assets(db: Session):
     return db.query(Asset).all()
 
