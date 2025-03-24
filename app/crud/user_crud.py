@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+# from sqlalchemy.orm.attributes import flag_modified
 from app.security import get_password_hash
 from app.database.models import User
 from app.schemas.user_schemas import UserCreate, UserUpdate
@@ -40,12 +41,14 @@ def create_user(db: Session, user: UserCreate):
 
 def update_user(db: Session, user_id: int, user_update: UserUpdate):
     db_user = get_user_by_id(db, user_id)
+    if not db_user:
+        return None
     # If the password is updated, hash before changing db entry
     if user_update.password:
         user_update.password = get_password_hash(user_update.password)
-    if db_user:
-        for key, value in user_update.dict(exclude_unset=True).items():
-            setattr(db_user, key, value)
+
+    for key, value in user_update.dict(exclude_unset=True).items():
+        setattr(db_user, key, value)
     db.commit()
     db.refresh(db_user)
     return db_user
