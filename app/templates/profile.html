@@ -4,9 +4,8 @@
     <!-- Left Column: User Profile Form -->
     <div class="col-md-6">
       <h2 class="mb-4">Update Profile</h2>
-      <form method="post" action="/users/update/{{ user.user_id }}" novalidate>
+      <form method="post" action="/users/update/{{ user.user_id }}" novalidate class="needs-validation">
         <div class="form-group mb-3">
-          <h6>Please fill form in entirely</h6>
           <label for="username">Username</label>
           <input
             type="text"
@@ -29,23 +28,23 @@
           />
         </div>
         <div class="form-group mb-3">
-          <label for="password">Password</label>
+          <label for="password">New Password (Leave blank to keep current password)</label>
           <input
             type="password"
             class="form-control"
             id="password"
             name="password"
-            placeholder="Leave blank to keep current password"
+            minlength="8"
           />
         </div>
         <div class="form-group mb-3">
-          <label for="confirm_password">Confirm Password</label>
+          <label for="confirm_password">Confirm New Password</label>
           <input
             type="password"
             class="form-control"
             id="confirm_password"
             name="confirm_password"
-            placeholder="Re-enter password to confirm"
+            minlength="8"
           />
         </div>
         <input type="hidden" name="is_admin" value="{{ user.is_admin }}" />

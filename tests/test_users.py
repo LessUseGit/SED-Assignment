@@ -127,6 +127,7 @@ def test_update_user(login_user):
         "username": "updated_user",
         "email": "updated_user@example.com",
         "password": "newpassword123",
+        "confirm_password": "newpassword123",
         "is_admin": False,
         "is_active": False,
     }
@@ -164,6 +165,7 @@ def test_update_user_with_existing_email(login_user):
         "username": "updated_user",
         "email": "existing_email@example.com",
         "password": "newpassword123",
+        "confirm_password": "newpassword123",
         "is_admin": True,
         "is_active": True,
     }
@@ -187,13 +189,14 @@ def test_update_user_with_nonexistent_id():
         "username": "nonexistent_user",
         "email": "nonexistent@example.com",
         "password": "newpassword123",
+        "confirm_password": "newpassword123",
         "is_admin": True,
         "is_active": True,
     }
 
     response = client.post("/users/update/999", data=user_data)
     assert response.status_code == 200
-    assert "Failed to update user" in response.text
+    assert "User not found" in response.text
 
 
 def test_delete_user(create_user, login_user):

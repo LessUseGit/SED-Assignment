@@ -110,20 +110,47 @@ def update_user(
     username: str = Form(...),
     email: EmailStr = Form(...),
     password: str|None = Form(...),
+    confirm_password: str|None = Form(...),
     is_admin: bool|None = Form(...),
     is_active: bool = Form(...),
     db: Session = Depends(get_db),
 ):
+    existing_user = user_crud.get_user_by_id(db, user_id)
+
+    if not existing_user:
+        add_flash_message(request, "User not found", category="danger")
+        return RedirectResponse(url="/users/management", status_code=302)
+
+    if (
+        existing_user.username == username
+        and existing_user.email == email
+        and (password is None or password == "")
+        and existing_user.is_admin == is_admin
+        and existing_user.is_active == is_active
+    ):
+        add_flash_message(request, "No changes were made", category="warning")
+        return RedirectResponse(url="/users/management", status_code=302)
+
+
+    if password and password != confirm_password:
+        add_flash_message(request, "Passwords do not match", category="danger")
+        return RedirectResponse(url="/users/management", status_code=302)
+    
+    if password and len(password) < 8:
+        add_flash_message(request, "Password doesn't meet criteria", category="danger")
+        return RedirectResponse(url="/users/management", status_code=302)
+
     updated_user = UserUpdate(
         username=username,
         email=email,
-        password=password,
+        password=password if password else None,
         is_admin=is_admin,
         is_active=is_active,
     )
 
     try:
         user_crud.update_user(db=db, user_id=user_id, user_update=updated_user)
+        print(updated_user)
     except:
         add_flash_message(request, "Failed to update user", category="danger")
     else:
